@@ -3,7 +3,7 @@
 Network security course assignments and hacks. 
 
 Homework problem statements were provided by [Michalis Polychronakis][1] for the
-Sprint '16 [network security][2] course at Stony Brook university.
+Spring '16 [network security][2] course at Stony Brook university.
 
 All homework solutions are my own and are MIT-licensed (see `LICENSE`).
 
