@@ -17,10 +17,19 @@ clean:
 test-error: mydump
 			./mydump -i eth0 -r filename -s string expression
 
+test-default: mydump
+			./mydump expression
+
 test-eth0: mydump
-			./mydump -i eth0 -s string expression
+			./mydump -i eth0 expression
+
+test-eth0-osx: mydump
+			./mydump -i en0 "port 80"
 
 test-file: mydump
+			./mydump -r filename expression
+
+test-string: mydump
 			./mydump -r filename -s string expression
 
 .PHONY: all clean

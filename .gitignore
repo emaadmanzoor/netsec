@@ -1,5 +1,7 @@
 *.swo
 *.swp
+*.o
+mydump
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
