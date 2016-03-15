@@ -24,7 +24,7 @@ test-eth0: mydump
 			./mydump -i eth0 expression
 
 test-eth0-osx: mydump
-			./mydump -i en0 "port 80"
+			./mydump -i en0 "ip"
 
 test-file: mydump
 			./mydump -r filename expression

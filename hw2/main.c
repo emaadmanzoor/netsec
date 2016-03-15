@@ -4,10 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "packet.h"
+
 extern char *optarg;
 extern int optind;
 static const char optstring[] = "i:r:s:";
 static const char usage[] = "usage: %s [-i interface] [-r file] [-s string] expr\n";
+
+void got_packet(u_char *args, const struct pcap_pkthdr *header,
+                const u_char *packet);
 
 int main(int argc, char *argv[]) {
   char c; // for getopt
@@ -20,8 +25,6 @@ int main(int argc, char *argv[]) {
   struct bpf_program fexp; // compiled filter expression
   bpf_u_int32 netmask; // netmask of pcap device
   bpf_u_int32 netip; // ip of snipping device
-  struct pcap_pkthdr header;
-  const u_char *packet;
   bool interface = false;
   bool file = false;
   bool string = false;
@@ -60,7 +63,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (interface) { // if an interface was specified
-    handle = pcap_open_live(dev, BUFSIZ, 1, 65536, errbuf);
+    handle = pcap_open_live(dev, BUFSIZ, 1, SNAP_LEN, errbuf);
   } else if (file) { // if a file was specified
     handle = pcap_open_offline(fname, errbuf);
   } else { // if neither an interface nor a file was specified
@@ -69,7 +72,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "Couldn't find default device: (%s)\n", errbuf);
       exit(-1);
     }
-    handle = pcap_open_live(dev, BUFSIZ, 1, 65536, errbuf);
+    handle = pcap_open_live(dev, BUFSIZ, 1, SNAP_LEN, errbuf);
   }
   
   // check if handle is valid
@@ -82,10 +85,10 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Can't get netmask for device %s\n", dev);
     netip = 0;
     netmask = 0;
+    exit(-1);
   }
 
   expr = argv[argc-1];
-  printf("Using expression: %s\n", expr);
   if (pcap_compile(handle, &fexp, expr, 0, netip) == -1) {
     fprintf(stderr, "Couldn't parse filter %s: (%s)\n", expr, pcap_geterr(handle));
     exit(-1);
@@ -96,9 +99,17 @@ int main(int argc, char *argv[]) {
     exit(-1);
   }
 
-  packet = pcap_next(handle, &header);
-  printf("Jacked a packet with length of [%d]\n", header.len);
+  printf("Starting packet capture: ");
+  printf(" Device: %s ", dev);
+  printf(" BPF expression: %s\n", expr);
+  pcap_loop(handle, -1, got_packet, NULL);
+
+  pcap_freecode(&fexp);
   pcap_close(handle);
 
   return 0;
+}
+
+void got_packet(u_char *args, const struct pcap_pkthdr *header,
+                const u_char *packet) {
 }
