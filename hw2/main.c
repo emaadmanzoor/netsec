@@ -100,7 +100,10 @@ int main(int argc, char *argv[]) {
   }
 
   printf("Starting packet capture: ");
-  printf(" Device: %s ", dev);
+  if (interface)
+    printf(" Device: %s ", dev);
+  else
+    printf(" File: %s ", fname);
   printf(" BPF expression: %s\n", expr);
   pcap_loop(handle, -1, got_packet, NULL);
 
@@ -112,4 +115,7 @@ int main(int argc, char *argv[]) {
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header,
                 const u_char *packet) {
+  static int count = 1;
+  printf("Packet number: %d\n", count);
+  count++;
 }

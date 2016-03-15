@@ -27,7 +27,7 @@ test-eth0-osx: mydump
 			./mydump -i en0 "ip"
 
 test-file: mydump
-			./mydump -r filename expression
+			./mydump -r ../hw1/hw1.pcap "ip"
 
 test-string: mydump
 			./mydump -r filename -s string expression
