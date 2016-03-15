@@ -1,0 +1,416 @@
+CSE508: Network Security, Spring 2016
+Homework 1 Solutions (by Emaad Ahmed Manzoor, 110622899)
+--------------------------------------------------------
+
+Note: The commands below use BSD awk (tested on OSX).
+
+1.1 How many packets does the trace contain?
+
+    Answer:   32664 packets
+    Command:  tcpdump -n -r hw1.pcap  | wc -l
+
+1.2 How many ARP packets and how many UDP packets?
+
+    Answer:   ARP = 11304, UDP = 18382
+    Commands: tcpdump -n -r hw1.pcap arp | wc -l
+              tcpdump -n -r hw1.pcap udp | wc -l
+ 
+1.3 How many packets were exchanged between 192.168.0.200 and 91.189.92.190?
+
+    Answer:   543 packets
+    Command:  tcpdump -n -r hw1.pcap \(src 192.168.0.200 and dst 91.189.92.190\) or \(src 91.189.92.190 and dst 192.168.0.200\) | wc -l
+
+1.4 Print the unique source IP addresses found in the trace. 
+
+    Answer: 34 unique source IP addresses.
+
+      0.0.0.0
+      1.234.31.20
+      122.154.101.54
+      130.75.16.5
+      159.148.96.184
+      169.254.56.55
+      192.168.0.1
+      192.168.0.10
+      192.168.0.11
+      192.168.0.12
+      192.168.0.2
+      192.168.0.200
+      192.168.0.3
+      192.168.0.5
+      192.168.0.6
+      192.168.0.7
+      194.168.4.100
+      216.137.63.121
+      216.137.63.137
+      46.51.197.88
+      46.51.197.89
+      62.252.170.81
+      62.252.170.91
+      87.230.23.162
+      87.98.246.8
+      91.189.88.33
+      91.189.89.88
+      91.189.90.40
+      91.189.90.41
+      91.189.91.14
+      91.189.91.15
+      91.189.92.190
+      92.240.68.152
+
+    Command: tcpdump -n -r hw1.pcap ip | sed 's/.*IP \([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/' | sort | uniq
+
+1.5 Print the unique destination IP addresses found in the trace. 
+
+    Answer: 32 unique destination IP addresses.
+
+      1.234.31.20
+      122.154.101.54
+      130.75.16.5
+      159.148.96.184
+      169.254.255.255
+      192.168.0.12
+      192.168.0.200
+      192.168.0.255
+      194.168.4.100
+      216.137.63.121
+      216.137.63.137
+      224.0.0.22
+      224.0.0.251
+      224.0.0.252
+      224.0.0.253
+      239.255.255.250
+      255.255.255.255
+      46.51.197.88
+      46.51.197.89
+      62.252.170.81
+      62.252.170.91
+      87.230.23.162
+      87.98.246.8
+      91.189.88.33
+      91.189.89.88
+      91.189.90.40
+      91.189.90.41
+      91.189.91.14
+      91.189.91.15
+      91.189.92.190
+      92.240.68.152
+
+    Command: tcpdump -n -r hw1.pcap ip | sed 's/.*> \([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/' | sort | uniq 
+
+1.6 What are the top-5 TCP and top-5 UDP destination ports?
+
+    Answers:
+
+      Top 5 TCP destination ports:
+
+        80
+        54634
+        49836
+        47110
+        40341
+
+      Command: tcpdump -n -r hw1.pcap tcp | sed 's/.*> \([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.\([0-9]\{1,5\}\).*/\2/' | sort | uniq -c | sort -nr -k 1 | head -n 5
+
+      Top 5 UDP destination ports:
+
+        1900
+        137
+        5355
+        5353
+        138
+
+      Command: tcpdump -n -r hw1.pcap udp | sed 's/.*> \([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.\([0-9]\{1,5\}\).*/\2/' | sort | uniq -c | sort -nr -k 1 | head -n 5
+
+1.7 How many TCP packets have the SYN flag set?
+
+    Answer: 75
+    Command: tcpdump -n -r hw1.pcap 'tcp[tcpflags] & tcp-syn != 0' | wc -l
+
+1.8 How many TCP connection attempts were made?
+
+    Answer: 37
+    Command: tcpdump -n -r hw1.pcap 'tcp[tcpflags] == tcp-syn' | wc -l
+
+1.9 Towards which ports were TCP connection attempts made?
+
+    Answer: 443, 465, 80, 9100
+    Command: tcpdump -n -r hw1.pcap 'tcp[tcpflags] == tcp-syn' | sed 's/.*> \([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.\([0-9]\{1,5\}\).*/\2/' | sort | uniq
+
+1.10 How many HTTP GET requests were made? Print the URLs of all HTTP requests
+     for JPG files.
+
+    Answer: 94 HTTP GET requests.
+    Command: tcpdump -n -r hw1.pcap | grep GET | wc -l
+
+    Answer: JPG file URLs: 
+      http://pic.leech.it/i/f166c/479246b0asttas.jpg
+      /i/f166c/479246b0asttas.jpg
+      http://ecx.images-amazon.com/images/I/41oZ1XsiOAL._SL500_AA300_.jpg
+      http://www.nature.com/news/2009/090527/images/459492a-i1.0.jpg
+      /news/2009/090527/images/459492a-i1.0.jpg
+    
+    Command: tcpdump -n -r hw1.pcap | grep GET | grep -i jpg | sed 's/.*GET \(.*\) HTTP.*$/\1/'
+
+1.11  When (date and time) was the first and last packet of the trace sent?
+
+      Answers:
+        First packet: 2013-01-12 11:37:42
+        Last packet: 2013-01-14 13:27:03
+
+      Commands:
+        tcpdump -n -r hw1.pcap -tttt | head -n 1 | sed 's/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).*/\1/'
+        tcpdump -n -r hw1.pcap -tttt | tail -n 1 | sed 's/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).*/\1/'
+
+1.12  What is the brand of the device that sent most of the packets? What is its
+      IP address?
+
+      Answers:
+        Brand:        NETGEAR (MAC c4:3d:c7:17:6f:9b, looked up online)
+        IP addresses:
+
+        1.234.31.20
+        122.154.101.54
+        130.75.16.5
+        159.148.96.184
+        192.168.0.1
+        192.168.0.200
+        194.168.4.100
+        216.137.63.121
+        216.137.63.137
+        46.51.197.88
+        46.51.197.89
+        62.252.170.81
+        62.252.170.91
+        87.230.23.162
+        87.98.246.8
+        91.189.88.33
+        91.189.89.88
+        91.189.90.40
+        91.189.90.41
+        91.189.91.14
+        91.189.91.15
+        91.189.92.190
+        92.240.68.152 
+
+      Commands:
+        Brand (MAC address): tcpdump -n -r hw1.pcap -e | sed 's/.*\([[:alnum:]]\{2\}:[[:alnum:]]\{2\}:[[:alnum:]]\{2\}:[[:alnum:]]\{2\}:[[:alnum:]]\{2\}:[[:alnum:]]\{2\}\) >.*/\1/' | sort | uniq -c | sort -nr -k 1 | head -n 1
+        IP address: tcpdump -n -r hw1.pcap -e ip | grep c4:3d:c7:17:6f:9b | sed 's/.*: \([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)[\.[0-9]\{0,5\}]*.*/\1/' | sort | uniq
+ 
+1.13  Report the distribution of Ethernet packet sizes (how many packets of size
+      X exist in the trace, for all values of X in the trace).
+
+      Command: tcpdump -n -r hw1.pcap -e | sed 's/.*length \([0-9]*\):.*/\1/' | sort | uniq -c
+      Answer: (packet size frequency<SPACE>packet size)
+        40 1033
+         6 1034
+         4 1035
+         1 1036
+         2 105
+         4 106
+        10 107
+         1 1096
+       180 110
+         1 1104
+         3 111
+         1 1113
+         1 112
+         2 1146
+         1 1152
+        28 119
+       121 120
+         4 124
+         7 125
+        15 127
+         3 129
+         1 1403
+         1 141
+        11 142
+         1 144
+      1034 1448
+         7 149
+        10 154
+         1 156
+         1 157
+         2 163
+        60 165
+        65 167
+        12 168
+         6 170
+         1 171
+       146 175
+         3 177
+         4 178
+        16 179
+        22 180
+         3 181
+         9 182
+         3 183
+         2 184
+         4 188
+         2 189
+         2 191
+         2 195
+         6 198
+         2 199
+         2 200
+         4 201
+        19 202
+         3 203
+         2 208
+        39 219
+         2 220
+         2 228
+        36 231
+         3 232
+         2 239
+         1 240
+         1 242
+       281 243
+         2 244
+         1 246
+        54 249
+         1 251
+         3 252
+         1 254
+         2 255
+         7 262
+         5 263
+         6 264
+        14 265
+        10 266
+         6 267
+         1 276
+         2 278
+         4 279
+         4 280
+         1 281
+         6 282
+         9 284
+         2 288
+        15 302
+         1 306
+        12 307
+         1 308
+        23 315
+         2 317
+        85 318
+         4 322
+         1 323
+        85 326
+         5 330
+      2759 331
+         1 335
+        88 338
+      2749 340
+       325 342
+         1 344
+         1 346
+         6 350
+         1 351
+         2 352
+        87 362
+         1 363
+         1 366
+         1 367
+         1 380
+        88 386
+        87 390
+        87 392
+        86 394
+      2759 395
+        85 398
+      2758 405
+         2 412
+         1 413
+         1 416
+         1 418
+        24 42
+         3 431
+         2 436
+         1 440
+         1 452
+        33 460
+         1 469
+       164 475
+        10 476
+         1 478
+         2 480
+         1 482
+       166 484
+        10 485
+         1 486
+        13 489
+         1 502
+         1 522
+         1 526
+       160 527
+        10 528
+         1 530
+         2 532
+         1 535
+       162 539
+         1 54
+        10 540
+       157 541
+        11 542
+         6 544
+         2 545
+         2 546
+         5 547
+         2 548
+         2 549
+        17 551
+       163 555
+        10 556
+         2 558
+         5 562
+         2 564
+         2 570
+         1 574
+         2 590
+      12190 60
+        32 602
+         1 612
+         1 613
+        13 62
+         1 624
+         1 628
+       232 63
+         2 638
+       887 64
+         4 65
+      1046 66
+         1 664
+        12 666
+         8 68
+         1 680
+         1 686
+         6 69
+         1 694
+        22 698
+         3 70
+         1 72
+        87 74
+         8 75
+         6 76
+         2 77
+         4 79
+        54 81
+         8 816
+         5 817
+        52 82
+        43 84
+         4 85
+         1 860
+        14 87
+         5 88
+         1 886
+         4 89
+        13 90
+       341 91
+         1 913
+      1740 92
+         2 93
+         2 94
+         2 95
