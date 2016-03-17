@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (interface) { // if an interface was specified
-    handle = pcap_open_live(dev, BUFSIZ, 1, SNIFFLEN, errbuf);
+    handle = pcap_open_live(dev, SNIFFLEN, 1, 0, errbuf);
   } else if (file) { // if a file was specified
     handle = pcap_open_offline(fname, errbuf);
   } else { // if neither an interface nor a file was specified
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "Couldn't find default device: (%s)\n", errbuf);
       exit(-1);
     }
-    handle = pcap_open_live(dev, BUFSIZ, 1, SNIFFLEN, errbuf);
+    handle = pcap_open_live(dev, SNIFFLEN, 1, 0, errbuf);
   }
   
   // check if handle is valid
