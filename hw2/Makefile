@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -g -lpcap
+CFLAGS=-Wall -g -lpcap -std=c11
 SOURCES := $(wildcard *.c)
 OBJS := $(SOURCES:.c=.o)
 
@@ -14,22 +14,19 @@ mydump: $(OBJS)
 clean:
 	    rm -f mydump $(OBJS)
 
-test-error: mydump
-			./mydump -i eth0 -r filename -s string expression
-
-test-default: mydump
-			./mydump expression
-
 test-eth0: mydump
-			./mydump -i eth0 expression
+			./mydump -i eth0
 
 test-eth0-osx: mydump
-			./mydump -i en0 "ip"
+			./mydump -i en0
 
 test-file: mydump
-			./mydump -r ../hw1/hw1.pcap "ip"
+			./mydump -r hw1.pcap
 
-test-string: mydump
-			./mydump -r filename -s string expression
+test-file-expr: mydump
+			./mydump -r hw1.pcap ip
+
+test-file-string: mydump
+			./mydump -r hw1.pcap -s HTTP ip
 
 .PHONY: all clean

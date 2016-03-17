@@ -1,0 +1,36 @@
+CSE508: Network Security, Spring 2016
+Homework 2 Solution (by Emaad Ahmed Manzoor, 110622899)
+--------------------------------------------------------
+
+Compile
+-------
+
+  make
+
+Test
+----
+
+  - From a file
+
+      - Without BPF or string filtering:          make test-file
+      - With BPF filtering, no string filtering:  make test-file-expr
+      - With BPF and string filtering:            make test-file-string
+
+  - From an ethernet interface (without BPF or string filtering)
+
+      - On Linux:                                 make test-eth0
+      - On OSX/FreeBSD:                           make test-eth0-osx 
+
+Files
+-----
+
+  - README              This file.
+  - Makefile            Used to compile and test the sniffer.
+  - ethernet.h, ip.h    structs for ethernet and IP headers.
+  - param.h             Miscelleanous parameters.
+  - main.c              Main code.
+
+References
+----------
+
+  http://www.tcpdump.org/pcap.html
