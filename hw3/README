@@ -1,0 +1,30 @@
+CSE508: Network Security, Spring 2016
+Homework 3 Solution (by Emaad Ahmed Manzoor, 110622899)
+--------------------------------------------------------
+
+Limitations
+-----------
+
+  - Key length is limited to MAX_KEY_LEN (param.h)
+
+Compile
+-------
+
+  make
+
+Test
+----
+
+  TODO
+
+Files
+-----
+
+  - README              This file.
+  - Makefile            Used to compile and test the proxy.
+  - main.c              Main code.
+
+References
+----------
+
+   TODO
