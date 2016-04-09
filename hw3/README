@@ -6,6 +6,25 @@ Limitations
 -----------
 
   - Key length is limited to MAX_KEY_LEN (param.h)
+  - Only the client has been implemented.
+
+Example
+-------
+
+   - Start the server: ncat -e /bin/cat -k -l 2222
+   - Start the client: ./pbproxy -k mykey localhost 2222
+
+Starting pbproxy: ( Keyfile=mykey  Dest=localhost  Out-port=2222 )
+test
+    Input bytes: 74 65 73 74 0a
+    Sent IV (8 bytes): f5 aa 0f ac a4 7b 75 7d
+    Sent encrypted data (5 bytes): ed a0 4a 43 23
+    Sent 13 bytes.
+
+    Received 13 bytes.
+    IV (8 bytes): f5 aa 0f ac a4 7b 75 7d
+    Decrypted data (5 bytes): ed a0 4a 43 23
+    Decrypted string: test
 
 Compile
 -------
@@ -15,7 +34,7 @@ Compile
 Test
 ----
 
-  TODO
+  make test-client
 
 Files
 -----
@@ -23,8 +42,12 @@ Files
   - README              This file.
   - Makefile            Used to compile and test the proxy.
   - main.c              Main code.
+  - encrypt.h           Header for AES CTR
+  - param.h             Parameters
+  - mykey               Key file for tests
 
 References
 ----------
 
-   TODO
+   - http://www.linuxhowtos.org/C_C++/socket.htm
+   - www.gurutechnologies.net/blog/aes-ctr-encryption-in-c/
